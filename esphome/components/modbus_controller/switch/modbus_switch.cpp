@@ -96,10 +96,10 @@ void ModbusSwitch::write_state(bool state) {
         if (state) {
           cmd = ModbusCommandItem::create_write_single_command(
               parent_, this->start_address + this->offset / 2,
-              get_data<uint32_t>(this->last_register_value, this->offset) & this->bitmask);
+              get_data<uint32_t>(this->last_register_value, this->offset) | this->bitmask);
           ESP_LOGV(
               TAG, "state true: %s",
-              format_hex_pretty(get_data<uint32_t>(this->last_register_value, this->offset) & this->bitmask).c_str());
+              format_hex_pretty(get_data<uint32_t>(this->last_register_value, this->offset) | this->bitmask).c_str());
 
         } else {
           cmd = ModbusCommandItem::create_write_single_command(
