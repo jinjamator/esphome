@@ -21,6 +21,7 @@ void ModbusSwitch::dump_config() { LOG_SWITCH(TAG, "Modbus Controller Switch", t
 
 void ModbusSwitch::parse_and_publish(const std::vector<uint8_t> &data) {
   bool value = false;
+  this->last_register_value = data;
   switch (this->register_type) {
     case ModbusRegisterType::DISCRETE_INPUT:
     case ModbusRegisterType::COIL:
@@ -91,8 +92,16 @@ void ModbusSwitch::write_state(bool state) {
         cmd = ModbusCommandItem::create_write_multiple_command(parent_, this->start_address + this->offset / 2, 1,
                                                                bool_states);
       } else {
-        cmd = ModbusCommandItem::create_write_single_command(parent_, this->start_address + this->offset / 2,
-                                                             state ? 0xFFFF & this->bitmask : 0u);
+        if (state) {
+          cmd = ModbusCommandItem::create_write_single_command(
+              parent_, this->start_address + this->offset / 2,
+              get_data<uint16_t>(this->last_register_value, this->offset) & this->bitmask);
+
+        } else {
+          cmd = ModbusCommandItem::create_write_single_command(
+              parent_, this->start_address + this->offset / 2,
+              get_data<uint16_t>(this->last_register_value, this->offset) & ~this->bitmask);
+        }
       }
     }
   }

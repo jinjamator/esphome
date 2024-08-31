@@ -41,6 +41,7 @@ class ModbusSwitch : public Component, public switch_::Switch, public SensorItem
 
  protected:
   ModbusController *parent_;
+  std::vector<uint8_t> last_register_value;
   bool use_write_multiple_;
   optional<transform_func_t> publish_transform_func_{nullopt};
   optional<write_transform_func_t> write_transform_func_{nullopt};
