@@ -92,7 +92,7 @@ void ModbusSwitch::write_state(bool state) {
         cmd = ModbusCommandItem::create_write_multiple_command(parent_, this->start_address + this->offset / 2, 1,
                                                                bool_states);
       } else {
-        ESP_LOGV(TAG, "last_register_value = %x", this->last_register_value);
+        ESP_LOGV(TAG, "last_register_value: %s", format_hex_pretty(this->last_register_value).c_str());
         if (state) {
           cmd = ModbusCommandItem::create_write_single_command(
               parent_, this->start_address + this->offset / 2,
