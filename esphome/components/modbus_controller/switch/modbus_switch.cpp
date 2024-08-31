@@ -94,14 +94,20 @@ void ModbusSwitch::write_state(bool state) {
       } else {
         ESP_LOGV(TAG, "last_register_value: %s", format_hex_pretty(this->last_register_value).c_str());
         if (state) {
-          cmd = ModbusCommandItem::create_write_single_command(parent_, this->start_address + this->offset / 2,
-                                                               this->last_register_value & this->bitmask);
-          ESP_LOGV(TAG, "send: %s", format_hex_pretty(this->last_register_value & this->bitmask).c_str());
+          cmd = ModbusCommandItem::create_write_single_command(
+              parent_, this->start_address + this->offset / 2,
+              get_data<uint32_t>(this->last_register_value, this->offset) & this->bitmask);
+          ESP_LOGV(
+              TAG, "state true: %s",
+              format_hex_pretty(get_data<uint32_t>(this->last_register_value, this->offset) & this->bitmask).c_str());
 
         } else {
-          cmd = ModbusCommandItem::create_write_single_command(parent_, this->start_address + this->offset / 2,
-                                                               this->last_register_value & ~this->bitmask);
-          ESP_LOGV(TAG, "send: %s", format_hex_pretty(this->last_register_value & ~this->bitmask).c_str());
+          cmd = ModbusCommandItem::create_write_single_command(
+              parent_, this->start_address + this->offset / 2,
+              get_data<uint32_t>(this->last_register_value, this->offset) & ~this->bitmask);
+          ESP_LOGV(
+              TAG, "state false: %s",
+              format_hex_pretty(get_data<uint32_t>(this->last_register_value, this->offset) & ~this->bitmask).c_str());
         }
       }
     }
